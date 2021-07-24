@@ -1,0 +1,7 @@
+26/03/2021
+ADD:
+1. Se agrega ntp para envio de timestamp en telemetria
+
+
+COMMIT: habilitado ntp para enviar timestamp en telemetría
+Nro:    209a0cfe9efd21438e5a220afc64ad342e0341de
