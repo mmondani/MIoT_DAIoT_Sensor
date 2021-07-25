@@ -14,6 +14,7 @@ extern String fversion;
 extern String device;
 extern String tipo_device;
 extern String mqtt_server;
+extern String fuota_server;
 extern String mqtt_tcp_str;
 extern String ubicacion;
 extern String ssid;
@@ -188,6 +189,10 @@ void handle_config() {
       <div class='form-group'>\
        <label for='mqtt_server'>Puerto Broker</label>\
        <input type='text' class='form-control' name='mqtt_tcp_str' id='mqtt_tcp_str' value='" + mqtt_tcp_str + "'>\
+      </div>\
+      <div class='form-group'>\
+       <label for='mqtt_server'>Fuota server</label>\
+       <input type='text' class='form-control' name='fuota_server' id='fuota_server' value='" + fuota_server + "'>\
       </div>\
      </div>\
      <div class='well'><h2 class='text-center'>Dispositivo</h2>\

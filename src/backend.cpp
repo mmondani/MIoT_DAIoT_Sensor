@@ -8,6 +8,7 @@ extern String passwd_AP;
 extern String www_username;
 extern String device;
 extern String mqtt_server;
+extern String fuota_server;
 extern String mqtt_tcp_str;
 extern String ubicacion;
 extern String ssid;
@@ -26,7 +27,7 @@ extern uint8_t sensor;
 File file_funciones,file_bs_css,file_bs_js,file_jq,file_font,file_estilo;
 
 
-void init_webserver(void){
+void webserver_init(void){
   //--Configura los recursos web del server
   //--Archivos
   web_server.on("/css/bootstrap.min.css.gz", handle_bootstrap_css);
@@ -62,6 +63,7 @@ void handleUpdateSettings(){
   String body;
   device=web_server.arg("device");
   mqtt_server=web_server.arg("mqtt_server");
+  fuota_server=web_server.arg("fuota_server");
   mqtt_tcp_str=web_server.arg("mqtt_tcp_str");
   passwd_AP=web_server.arg("passwd_AP");
   ssid=web_server.arg("ssid");

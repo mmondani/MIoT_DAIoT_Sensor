@@ -1,7 +1,8 @@
 #include "publica.h"
 
 //--Objetos externos
-extern AsyncMqttClient mqttClient;
+extern WiFiClientSecure espClient;
+extern PubSubClient mqttClient;
 
 //--Variables externas
 extern String topic_telem;
@@ -30,19 +31,26 @@ uint8_t flag_push_att=1;
 uint16_t packetIdPub;
 
 void send_pub(int elemento){
+    //--Verica si hay conexion wifi y mqtt
+    if (WiFi.status() != WL_CONNECTED){
+        wifi_connect();
+    }
+    if (!mqttClient.connected()){
+        mqtt_connect();
+    }
     serializeJson(publica, json_pub);
     switch (elemento){
         case TELEMETRIA:
             Serial.print("Publica Telemetria:");
             Serial.println(json_pub);
-            packetIdPub = mqttClient.publish(topic_telem.c_str(), 1, true, json_pub);                            
+            packetIdPub = mqttClient.publish(topic_telem.c_str(),json_pub);                                                    
             Serial.printf("Topico %s con QoS 1, packetId: %i\n", topic_telem.c_str(), packetIdPub);
             Serial.printf("Mensaje: T=%.2f H=%.2f\n", tempp, hump);
             break;
         case ACTUACION:
             Serial.print("Publica Actuacion:");
             Serial.println(json_pub);
-            packetIdPub = mqttClient.publish(topic_resp.c_str(), 1, true, json_pub);
+            packetIdPub = mqttClient.publish(topic_resp.c_str(), json_pub);
             Serial.printf("Topico %s con QoS 1, packetId: %i\n", topic_resp.c_str(), packetIdPub);
             break;
     }
@@ -60,7 +68,6 @@ void publica_medicion(void){
     
 }
 
-//{"Device":"DAIoT01","Actuacion":{"Canal":1,"Accion":"0n"}}
 void publica_canales(uint8_t canal){
     publica.clear();
     publica["Device"]=device;

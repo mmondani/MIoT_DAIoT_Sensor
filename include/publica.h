@@ -3,8 +3,11 @@
 
 #include <Arduino.h>
 #include <ArduinoJson.h>
-#include <AsyncMqttClient.h>
+//#include <AsyncMqttClient.h>
+#include <WiFiClientSecure.h>
+#include<PubSubClient.h>
 #include "timestamp.h"
+#include "mqtt.h"
 
 
 /*======================================[macros y definiciones]============================================*/

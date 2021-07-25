@@ -3,6 +3,7 @@
 //--Variables externas
 extern String device;
 extern String mqtt_server;
+extern String fuota_server;
 extern uint16_t mqtt_tcp;
 extern String mqtt_tcp_str;
 extern String passwd_AP;
@@ -19,6 +20,7 @@ extern uint32_t passwd_AP_eeprom_pos;
 extern uint32_t ssid_eeprom_pos;
 extern uint32_t ssid_passwd_eeprom_pos;
 extern uint32_t ubicacion_eeprom_pos;
+extern uint32_t fuota_server_eeprom_pos;
 extern uint32_t canal1_eeprom_pos;
 extern uint32_t canal2_eeprom_pos;
 extern uint32_t sensor_eeprom_pos;
@@ -28,6 +30,7 @@ extern uint8_t led_pulso;
 void read_vars(bool ver){
   device=read_StringEE(device_eeprom_pos, 25);
   mqtt_server=read_StringEE(mqtt_server_eeprom_pos, 25);
+  fuota_server=read_StringEE(fuota_server_eeprom_pos, 25);
   mqtt_tcp_str=read_StringEE(mqtt_tcp_str_eeprom_pos, 25);
   passwd_AP=read_StringEE(passwd_AP_eeprom_pos, 25);
   ssid=read_StringEE(ssid_eeprom_pos, 25); 
@@ -42,6 +45,7 @@ void read_vars(bool ver){
     Serial.println("");
     Serial.print("Nombre:");Serial.println(device);
     Serial.print("Broker:");Serial.println(mqtt_server);
+    Serial.print("Fuota server:");Serial.println(fuota_server);
     Serial.print("Puerto mqtt:");Serial.println(mqtt_tcp);
     Serial.print("Passwd AP:");Serial.println(passwd_AP);
     Serial.print("SSID:");Serial.println(ssid);
@@ -63,6 +67,10 @@ void write_vars(void){
   res = write_StringEE(mqtt_server_eeprom_pos, mqtt_server);
   check_error_updating(res);
   mqtt_server=read_StringEE(mqtt_server_eeprom_pos,25);
+
+  res = write_StringEE(fuota_server_eeprom_pos, fuota_server);
+  check_error_updating(res);
+  fuota_server=read_StringEE(fuota_server_eeprom_pos,25);
 
   res = write_StringEE(mqtt_tcp_str_eeprom_pos, mqtt_tcp_str);
   check_error_updating(res);
@@ -96,9 +104,9 @@ void write_vars(void){
   check_error_updating(res);
   sensor=(read_StringEE(sensor_eeprom_pos,25)).toInt();
 
-  //noInterrupts();
   EEPROM.commit();
-  //interrupts();
+
+  read_vars(0);
 }
 
 void factory_reset(void){
@@ -128,9 +136,8 @@ void factory_reset(void){
       write_StringEE(canal1_eeprom_pos, String(canal1_status));
       write_StringEE(canal2_eeprom_pos, String(canal2_status));
       write_StringEE(sensor_eeprom_pos, String(sensor));
-      //noInterrupts();
+      
       EEPROM.commit();
-      //interrupts();
     }
   }
 }
