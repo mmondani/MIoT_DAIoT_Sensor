@@ -118,11 +118,13 @@ void handle_estado() {
  </head>\
  <body><br><br>\
   <div class='panel panel-primary bg-2' id='home'>\
-   <div class='panel-heading'>Nombre de dispositivo:" + device + "</div>\
+   <div class='panel-heading'>Home</div>\
    <div class='panel-body'>\
     <form>\
+     <div class='well'><h2 class='text-center'>Dispositivo: " + device + "</h2><p>\
+     </div>\
      <div class='well'><h2 class='text-center'>Mediciones</h2><p>\
-      <label for='vp'>Valores instantaneos</label><p>\
+      <label for='vp'>Valores instantáneos</label><p>\
       Temperatura\
       <span class='text-primary' id='ti'>"+tempi+" </span> ºC<p>\
       Humedad\
@@ -225,9 +227,9 @@ void handle_info() {
   info="<!DOCTYPE html>\
 <html lang='en'>\
  <body><br><br>\
-  <div id='info' class='panel panel-primary bg-2 text-center'>\
+  <div id='info' class='panel panel-primary bg-2'>\
    <div class='panel-heading'>Información</div>\
-   <div class='panel-body'>\
+   <div class='panel-body text-center'>\
     <div class='form-group'>\
      <p>"+tipo_device+" de monitoreo remoto</p>\
      <p>Desarrollo de Aplicaciones para IoT</p>\
