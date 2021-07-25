@@ -34,11 +34,13 @@
 /*===================[Inclusiones]===============================================*/
 #include "DHT.h"
 #include <WiFi.h>
+#include <WiFiClientSecure.h>
+#include <PubSubClient.h>
 extern "C" {
   #include "freertos/FreeRTOS.h"
   #include "freertos/timers.h"
 }
-#include <AsyncMqttClient.h>
+//#include <AsyncMqttClient.h>
 #include <ESP32WebServer.h>
 #include <Arduino.h>
 #include <ArduinoJson.h>
@@ -70,7 +72,8 @@ extern "C" {
 #define MAX_BYTE_EEPROM               512
 
 /*===================[Objetos instanciados]======================================*/
-AsyncMqttClient mqttClient;
+MCC_wifi wifi;
+MCC_mqtt broker;
 TimerHandle_t mqttReconnectTimer;
 TimerHandle_t wifiReconnectTimer;
 TimerHandle_t freqLedTimer;
@@ -110,10 +113,34 @@ String www_username               =   "admin";
 String topic_telem                =   "device/telemetry";
 String topic_act                  =   "device/command";
 String topic_resp                 =   "device/action";
+String topic_dev_status           =   "device/status";
 String tipo_device                =   "Termohigrometro";
 //-- Versiones
 String fversion                   =   "1.0.0";          
 String hversion                   =   "1.0.0";
+const char* ca_cert = \
+"-----BEGIN CERTIFICATE-----\n" \
+"MIIDtzCCAp+gAwIBAgIUNpIuXcx4wH/lIFjmHQz5Gv6Qj7kwDQYJKoZIhvcNAQEL\n" \
+"BQAwazELMAkGA1UEBhMCU0UxEjAQBgNVBAgMCVN0b2NraG9sbTESMBAGA1UEBwwJ\n" \
+"U3RvY2tob2xtMRAwDgYDVQQKDAdoaW1pbmRzMQswCQYDVQQLDAJDQTEVMBMGA1UE\n" \
+"AwwMMTkyLjE2OC4xLjQyMB4XDTIxMDcyMzE5NDIyNVoXDTIyMDcyMzE5NDIyNVow\n" \
+"azELMAkGA1UEBhMCU0UxEjAQBgNVBAgMCVN0b2NraG9sbTESMBAGA1UEBwwJU3Rv\n" \
+"Y2tob2xtMRAwDgYDVQQKDAdoaW1pbmRzMQswCQYDVQQLDAJDQTEVMBMGA1UEAwwM\n" \
+"MTkyLjE2OC4xLjQyMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAxJFB\n" \
+"83pPIfIw3YqPEuSa6NacikeoAdgdNGpaBQ2uzxQ7IMWdxsmoHTG+uGG4ML/07FHo\n" \
+"UAsX9qH6dzgKK/BfMrsDir2KexHBWNa1+QzNsK9+iRXLbtwGGX5GIfU5tbbzmE4d\n" \
+"O+nlcYdZpEgvrOwEuQHXLWlu4tYEP3PxWM+PBIU2LPjnVuh9jHjUY6KPTCtRQrIF\n" \
+"eWm/4xpLx48r0Wtdxgb2kIYSaVdiULMYUWNROpqbZKNC+dRAqf6qqsfem6wimgQP\n" \
+"Wn0AmRaAe7QKJAm9DXVN8G5s5I+ch0w6xbuqGl3TZc1EXO9Z6NQdfO1ArhdLatnH\n" \
+"KWd/QSmkVz1aZxNx4wIDAQABo1MwUTAdBgNVHQ4EFgQUMj4aZN8Ds3YScQUm77cq\n" \
+"++z6QIkwHwYDVR0jBBgwFoAUMj4aZN8Ds3YScQUm77cq++z6QIkwDwYDVR0TAQH/\n" \
+"BAUwAwEB/zANBgkqhkiG9w0BAQsFAAOCAQEABgAaPU7Vyw5ruT/eaklpVwH/ckQ+\n" \
+"TSTQnb5nvLEcO358WmoPfQ90SjGOgSOHZeivRtYyLhpPwDAOhcpjW651gTCvX5Bp\n" \
+"Kptwus4LBOVoQUxon2X/G3/tSWedySnGx6EbC1sgX5XU/vAb3+8yffC9w+hJcsIX\n" \
+"b0T99VbiIt2rCkM45/UodEEw2msN7WSiGg36jjS5l6ERAAit1QZIoNZctW/6zdyc\n" \
+"RwGVVjVUEvX64LjthDVJwqxjG+pNzn4YwTnI6bzA2+zGZjA6aKiDc0GcmLLoPRS0\n" \
+"szRulfxnlHXN76PImjcO3iBOGYFxbtRmk6w2FEcdEj8erCDWO7c1a1FONw==\n" \
+"-----END CERTIFICATE-----\n";
 
 /*===================[Variables globales]========================================*/
 unsigned long previousSampleMillis      = 0;            // Stores last time temperature was published
@@ -130,6 +157,7 @@ uint8_t canal2_pin=CANAL2;
 uint8_t freset_pin=FRESET;
 uint8_t pin_dht=DHTPIN;
 uint8_t tipo_dht=DHTTYPE;
+String will_mess="up";
 
 
 void setup() {
@@ -164,21 +192,11 @@ void setup() {
   connectToWifi();
   WiFi.onEvent(WiFiEvent);
   
-
-  //--Callbacks de la conexión MQTT
-  mqttClient.onConnect(onMqttConnect);
-  mqttClient.onDisconnect(onMqttDisconnect);
-  mqttClient.onSubscribe(onMqttSubscribe);
-  mqttClient.onMessage(onMqttMessage);
-  mqttClient.onUnsubscribe(onMqttUnsubscribe);
-  mqttClient.onPublish(onMqttPublish);
-  mqttClient.setServer(mqtt_server.c_str(), mqtt_tcp_str.toInt());
-
-
-  // If your broker requires authentication (username and password), set them below
-  //mqttClient.setCredentials("REPlACE_WITH_YOUR_USER", "REPLACE_WITH_YOUR_PASSWORD");
-
-  //connectToWifi();
+  //--Inicializacion mqtt
+  broker.init(mqtt_server.c_str(), mqtt_tcp, device.c_str(), topic_dev_status.c_str(), will_mess, topic_act, LED_PULSO, ca_cert);
+  broker.setOnMess(topic_act);
+  broker.conn();
+  //broker.sub(topic_attributes);
 
   //--Montaje de SPIFFS
   if(!SPIFFS.begin(FORMAT_SPIFFS_IF_FAILED)){

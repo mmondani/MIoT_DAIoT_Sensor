@@ -5,6 +5,84 @@ Autor: Marcelo Castello - 2021
 Versión mejorada de un trabajo de Rui Santos (https://RandomNerdTutorials.com/esp32-mqtt-publish-dht11-dht22-arduino)
 
 
+
+
+
+
+
+# Mosquitto con TLS
+
+## Crear los certificados
+fuente:
+https://medium.com/himinds/mqtt-broker-with-secure-tls-communication-on-ubuntu-18-04-lts-and-an-esp32-mqtt-client-5c25fd7afe67
+
+
+
+## Correr
+
+#!/bin/bash
+
+IP="192.168.1.42"
+SUBJECT_CA="/C=SE/ST=Stockholm/L=Stockholm/O=himinds/OU=CA/CN=$IP"
+SUBJECT_SERVER="/C=SE/ST=Stockholm/L=Stockholm/O=himinds/OU=Server/CN=$IP"
+SUBJECT_CLIENT="/C=SE/ST=Stockholm/L=Stockholm/O=himinds/OU=Client/CN=$IP"
+
+function generate_CA () {
+   echo "$SUBJECT_CA"
+   openssl req -x509 -nodes -sha256 -newkey rsa:2048 -subj "$SUBJECT_CA"  -days 365 -keyout ca.key -out ca.crt
+}
+
+function generate_server () {
+   echo "$SUBJECT_SERVER"
+   openssl req -nodes -sha256 -new -subj "$SUBJECT_SERVER" -keyout server.key -out server.csr
+   openssl x509 -req -sha256 -in server.csr -CA ca.crt -CAkey ca.key -CAcreateserial -out server.crt -days 365
+}
+
+function generate_client () {
+   echo "$SUBJECT_CLIENT"
+   openssl req -new -nodes -sha256 -subj "$SUBJECT_CLIENT" -out client.csr -keyout client.key 
+   openssl x509 -req -sha256 -in client.csr -CA ca.crt -CAkey ca.key -CAcreateserial -out client.crt -days 365
+}
+
+function copy_keys_to_broker () {
+   cp ca.crt ../mosquitto/certs/
+   cp server.crt ../mosquitto/certs/
+   cp server.key ../mosquitto/certs/
+}
+
+generate_CA
+generate_server
+generate_client
+copy_keys_to_broker
+
+
+
+## Configurar mosco
+listener 8883
+cafile /etc/mosquitto/certs/ca.crt
+certfile /etc/mosquitto/certs/server.crt
+keyfile /etc/mosquitto/certs/server.key
+//no->require_certificate true
+//no->use_identity_as_username true
+
+## probar comunicacion
+mosquitto_sub -h '192.168.1.42' -t 'topico' --cafile Scaricati/ca.crt  -p 8883 --cert Scaricati/client.crt --key Scaricati/client.key -v
+
+mosquitto_pub -h '192.168.1.42' -t 'topico' --cafile Scaricati/ca.crt  -m 'hola' -p 8883 --cert Scaricati/client.crt --key Scaricati/client.key
+
+
+
+## en el esp32:
+const char* ca_cert = aquí va el ca.crt
+
+
+
+
+
+
+
+
+
 ## Contenidos
 
 
