@@ -233,7 +233,7 @@ void handle_info() {
     <div class='form-group'>\
      <p>"+tipo_device+" de monitoreo remoto</p>\
      <p>Desarrollo de Aplicaciones para IoT</p>\
-     <p>Ing. Marcelo Castello</p>\
+     <p>Esp. Ing. Marcelo Castello</p>\
      <p>Carrera de Especialización en Internet de las Cosas<p>\
      <p>Universidad de Buenos Aires</p>\
      <p>Versiones: hardware "+hversion+", firmware "+fversion+"</p>\
