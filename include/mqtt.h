@@ -5,6 +5,8 @@
 #include <Arduino.h>
 #include <WiFiClientSecure.h>
 #include <PubSubClient.h>
+#include "FS.h"
+#include "SPIFFS.h"
 #include "WiFi.h"
 #include "actuacion.h"
 #include "comandos.h"

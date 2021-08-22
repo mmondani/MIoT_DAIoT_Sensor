@@ -4,7 +4,7 @@
 // Version:             1.0.0
 // Date:                Julio 2021
 // Info:                Desarrollo de Aplicaciones para IoT
-// Autor:               Ing. Marcelo Castello
+// Autor:               Esp. Ing. Marcelo Castello
 //
 // TODO:    
 //        
@@ -14,7 +14,7 @@
 //
 // COMMIT:  
 //
-
+// Para subir FileSystem: platformio run --target uploadfs
 /*===================[Inclusiones]===============================================*/
 #include "DHT.h"
 #include <WiFi.h>
@@ -150,15 +150,15 @@ void setup() {
   webserver_init();
   
   //--Start del NTP
-  configTime(0, 0, ntpServer);
+  configTime(-3, 0, ntpServer);
 }
 
 void loop() {
   mqttClient.loop();
   web_server.handleClient();
-  unsigned long currentSampleMillis = millis();
   
   //--Intervalo de muestreo
+  unsigned long currentSampleMillis = millis();
   if (currentSampleMillis - previousSampleMillis >= sampleInterval) {
     previousSampleMillis = currentSampleMillis;
     //--Lee sensor DHT 

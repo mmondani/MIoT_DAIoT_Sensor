@@ -50,24 +50,21 @@ void mqtt_init(void){
   espClient.setCACert(ca_cert);
   mqttClient.setServer(mqtt_server.c_str(), mqtt_tcp_str.toInt());//mqttClient.setServer("192.168.1.42", 8883);
   mqttClient.setCallback(receivedCallback);
-
 }
 
 void mqtt_connect() {
   /* Loop until reconnected */
   while (!mqttClient.connected()) {
-    Serial.print("MQTT connecting ...");
-    /* client ID */
-    //String clientId = "mterbtheca01";
+    Serial.print("Conectando a MQTT...");
     /* connect now */
-    if (mqttClient.connect("DAIoT01")){
-      Serial.println("connected");
+    if (mqttClient.connect(device.c_str())){
+      Serial.println("Conectado");
       /* subscribe topic */
       mqttClient.subscribe(topic_act.c_str());
     } else {
-      Serial.print("failed, status code =");
+      Serial.print("falla, codigo status =");
       Serial.print(mqttClient.state());
-      Serial.println("try again in 5 seconds");
+      Serial.println("Nuevo intento en 5 segundos");
       /* Wait 5 seconds before retrying */
       delay(5000);
     }
@@ -76,7 +73,7 @@ void mqtt_connect() {
 
 
 void receivedCallback(char* topic, byte* payload, unsigned int length) {
-  Serial.println("Publish received.");
+  Serial.println("Publicacion recibida.");
   payload[length] = '\0';
   topic_rec = String((char*)topic);
   msg_rec = String((char*)payload);

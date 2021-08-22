@@ -20,7 +20,7 @@ extern DHT dht;
 void medicion(void){
     humi = dht.readHumidity();
     tempi = dht.readTemperature();
-    //--Check if any reads failed and exit early (to try again).
+    //--Comprueba que la medición no sea errónea.
     if (isnan(tempi) || isnan(humi)) {
         Serial.println(F("Fallo la lectura del sensor DHT!"));
         return;

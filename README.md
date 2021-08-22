@@ -57,7 +57,7 @@ copy_keys_to_broker
 
 
 
-## Configurar mosco
+## Configurar mosquitto
 listener 8883
 cafile /etc/mosquitto/certs/ca.crt
 certfile /etc/mosquitto/certs/server.crt
@@ -87,6 +87,12 @@ const char* ca_cert = aquí va el ca.crt
 
 
 - [ESP32 + DHT22](#esp32--dht22)
+- [Mosquitto con TLS](#mosquitto-con-tls)
+  - [Crear los certificados](#crear-los-certificados)
+  - [Correr](#correr)
+  - [Configurar mosquitto](#configurar-mosquitto)
+  - [probar comunicacion](#probar-comunicacion)
+  - [en el esp32:](#en-el-esp32)
   - [Contenidos](#contenidos)
   - [Introducción](#introducción)
   - [Características](#características)
