@@ -36,9 +36,9 @@ void read_vars(bool ver){
   ssid=read_StringEE(ssid_eeprom_pos, 25); 
   ssid_pass=read_StringEE(ssid_passwd_eeprom_pos, 25); 
   ubicacion=read_StringEE(ubicacion_eeprom_pos, 25); 
-  canal1_status=(read_StringEE(canal1_eeprom_pos,25)).toInt();
-  canal2_status=(read_StringEE(canal2_eeprom_pos,25)).toInt();
-  sensor=(read_StringEE(sensor_eeprom_pos,25)).toInt();
+  canal1_status=read_StringEE(canal1_eeprom_pos,25).toInt();
+  canal2_status=read_StringEE(canal2_eeprom_pos,25).toInt();
+  sensor=read_StringEE(sensor_eeprom_pos,25).toInt();
 
   mqtt_tcp=mqtt_tcp_str.toInt();
   if(ver){
@@ -62,47 +62,47 @@ void write_vars(void){
 
   res = write_StringEE(device_eeprom_pos, device);
   check_error_updating(res);
-  device=read_StringEE(device_eeprom_pos,25);
+  //device=read_StringEE(device_eeprom_pos,25);
 
   res = write_StringEE(mqtt_server_eeprom_pos, mqtt_server);
   check_error_updating(res);
-  mqtt_server=read_StringEE(mqtt_server_eeprom_pos,25);
+  //mqtt_server=read_StringEE(mqtt_server_eeprom_pos,25);
 
   res = write_StringEE(fuota_server_eeprom_pos, fuota_server);
   check_error_updating(res);
-  fuota_server=read_StringEE(fuota_server_eeprom_pos,25);
+  //fuota_server=read_StringEE(fuota_server_eeprom_pos,25);
 
   res = write_StringEE(mqtt_tcp_str_eeprom_pos, mqtt_tcp_str);
   check_error_updating(res);
-  mqtt_tcp_str=read_StringEE(mqtt_tcp_str_eeprom_pos,25); 
+  //mqtt_tcp_str=read_StringEE(mqtt_tcp_str_eeprom_pos,25); 
 
   res = write_StringEE(passwd_AP_eeprom_pos, passwd_AP);
   check_error_updating(res);
-  passwd_AP=read_StringEE(passwd_AP_eeprom_pos,25); 
+  //passwd_AP=read_StringEE(passwd_AP_eeprom_pos,25); 
 
   res = write_StringEE(ssid_eeprom_pos, ssid);
   check_error_updating(res);
-  ssid=read_StringEE(ssid_eeprom_pos,25); 
+  //ssid=read_StringEE(ssid_eeprom_pos,25); 
 
   res = write_StringEE(ssid_passwd_eeprom_pos, ssid_pass);
   check_error_updating(res);
-  ssid_pass=read_StringEE(ssid_passwd_eeprom_pos,25); 
+  //ssid_pass=read_StringEE(ssid_passwd_eeprom_pos,25); 
 
   res = write_StringEE(ubicacion_eeprom_pos, ubicacion);
   check_error_updating(res);
-  ubicacion=read_StringEE(ubicacion_eeprom_pos,25);  
+  //ubicacion=read_StringEE(ubicacion_eeprom_pos,25);  
 
   res = write_StringEE(canal1_eeprom_pos, String(canal1_status));
   check_error_updating(res);
-  canal1_status=(read_StringEE(canal1_eeprom_pos,25)).toInt();
+  //canal1_status=read_StringEE(canal1_eeprom_pos,25).toInt();
 
   res = write_StringEE(canal2_eeprom_pos, String(canal2_status));
   check_error_updating(res);
-  canal2_status=(read_StringEE(canal2_eeprom_pos,25)).toInt();
+  //canal2_status=read_StringEE(canal2_eeprom_pos,25).toInt();
 
   res = write_StringEE(sensor_eeprom_pos, String(sensor));
   check_error_updating(res);
-  sensor=(read_StringEE(sensor_eeprom_pos,25)).toInt();
+  //sensor=read_StringEE(sensor_eeprom_pos,25).toInt();
 
   EEPROM.commit();
 
@@ -117,7 +117,7 @@ void factory_reset(void){
       Serial.println("\r\nFactory reset!!");
       delay(100);
       digitalWrite(led_pulso,HIGH);
-      delay(500);
+      delay(1000);
       digitalWrite(led_pulso,LOW);
       delay(500);
       for (int i=0; i<20; i++){

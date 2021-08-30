@@ -1,6 +1,6 @@
 /*===================[File header]===============================================*/
 // File:                main.cpp
-// Licence:             GPLV3+
+// Licence:             
 // Version:             1.0.0
 // Date:                Julio 2021
 // Info:                Desarrollo de Aplicaciones para IoT
@@ -40,9 +40,9 @@
 //#define DHTTYPE                     DHT21     // DHT 21 (AM2301)   
 #define LED_BUILTIN                   2
 #define FRESET                        25        // pin para factory reset
-#define CANAL1                        27        // pin salida canal 1
-#define CANAL2                        23        // pin salida canal 2
-#define LED_PULSO                     2         // led de pulso
+#define CANAL1                        12        // pin salida canal 1
+#define CANAL2                        14        // pin salida canal 2
+#define LED_PULSO                     33        // led de pulso
 
 /*===================[Definiciones de software]==================================*/
 #define SERIAL_BAUDRATE               115200
@@ -77,10 +77,10 @@ String hardware                   =   "ESP32";
 String device                     =   "DAIoT";               //usado como template
 String mqtt_server                =   "192.168.1.42";
 String fuota_server               =   "192.168.1.17";
-String mqtt_tcp_str               =   "1883";
+String mqtt_tcp_str               =   "8883";
 String ssid                       =   "MiSSID";
 String ssid_pass                  =   "MiPasswd";
-String passwd_AP                  =   "MiAPPasswd";
+String passwd_AP                  =   "12345678";
 String ubicacion                  =   "MiUbicacion";
 uint8_t sensor                    =   1;
 uint8_t canal1_status             =   0;
@@ -94,7 +94,7 @@ String topic_act                  =   "device/command";
 String topic_resp                 =   "device/action";
 String tipo_device                =   "Termohigrometro";
 //-- Versiones
-String fversion                   =   "1.0.0";          
+String fversion                   =   "1.2.0";          
 String hversion                   =   "1.0.0";
 
 /*===================[Variables globales]========================================*/
@@ -126,26 +126,30 @@ void setup() {
 
   //--Bienvenida
   for(int i=0;i<10;i++){
-    digitalWrite(LED_PULSO,HIGH);
+    digitalWrite(led_pulso,HIGH);
     delay(50);
-    digitalWrite(LED_PULSO,LOW);
+    digitalWrite(led_pulso,LOW);
     delay(50);
   }
 
+  //--Montaje de SPIFFS
+  if(!SPIFFS.begin(FORMAT_SPIFFS_IF_FAILED)){
+    Serial.println("Falla de montaje de SPIFFS");
+    return;
+  }
+
   factory_reset();
+  Serial.println(tipo_device);
   read_vars(1); 
-  restore_canales();
+  Serial.print("Versión del firmware:");
+  Serial.println(fversion);
   check_update();
   dht.begin();
   mqtt_init();
   wifi_connect();
   mqtt_connect();
+  restore_canales();
 
-  //--Montaje de SPIFFS
-  if(!SPIFFS.begin(FORMAT_SPIFFS_IF_FAILED)){
-        Serial.println("Falla de montaje de SPIFFS");
-        return;
-    }
   //--Inicialización del web server embebido
   webserver_init();
   

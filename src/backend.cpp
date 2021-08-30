@@ -41,9 +41,6 @@ void webserver_init(void){
   web_server.on ( "/config.html", handle_config);
   web_server.on ( "/info.html", handle_info);
   web_server.onNotFound (handleNotFound);
-  //--AJAX
-  //web_server.on ("/setfixcolor",HTTP_GET, handle_setfixcolor);
-  //web_server.on ("/setcolor",HTTP_GET,handle_setcolor);
   
   web_server.on ("/refresh",HTTP_GET, handle_refresh);
   web_server.on ("/update_settings", HTTP_POST, handleUpdateSettings);

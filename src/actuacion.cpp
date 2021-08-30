@@ -8,8 +8,8 @@ extern uint8_t canal2_pin;
 extern uint8_t canal1_status;
 extern uint8_t canal2_status;
 extern TimerHandle_t freqLedTimer;
-extern uint8_t canal1_eeprom_pos;
-extern uint8_t canal2_eeprom_pos;
+extern uint32_t canal1_eeprom_pos;
+extern uint32_t canal2_eeprom_pos;
 
 
 void canal1_on(void){
@@ -40,21 +40,7 @@ void canal2_off(void){
     publica_canales(2);
 }
 
-void led_on(int acc){
-    if (acc==1){
-        digitalWrite(led_pulso, HIGH);
-
-        Serial.println("Led encendido");
-    }else if (acc==0){
-        digitalWrite(led_pulso, LOW);
-        Serial.println("Led apagado");
-
-    }
-
-}
-
 void led_pulse(void){
-        //xTimerStart(freqLedTimer, 0);
         digitalWrite(led_pulso, LOW);
         delay(50);
         digitalWrite(led_pulso, HIGH);

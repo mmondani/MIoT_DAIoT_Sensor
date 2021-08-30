@@ -42,7 +42,8 @@ void command_proc(const char* command,const char* param){
 
   //--Comando update
   if (comando=="update"){
-    write_StringEE(fuota_version_eeprom_pos,parametro);
+    write_StringEE(fuota_version_eeprom_pos, parametro);
+    Serial.print("Version solicitada:");Serial.println(parametro);
     write_StringEE(flag_update_eeprom_pos, "1");
     EEPROM.commit();
     delay(100);
@@ -57,7 +58,7 @@ void check_update(void){
     wifi_connect();
     delay(1000);
     String version=read_StringEE(fuota_version_eeprom_pos,25);
-    if (version="") version=fversion;
+    if (version=="") version=fversion;
     Serial.print("Se actualizará a la version:");
     Serial.println(version);
     write_StringEE(flag_update_eeprom_pos, "0");
@@ -65,7 +66,6 @@ void check_update(void){
     EEPROM.commit();
     interrupts();
     Serial.println("Actualizando.....");
-    //ESPhttpUpdate.setLedPin(LED_RANGO, LOW);
     Serial.println("http://"+fuota_server+"/updates/"+tipo_device+"/V"+version+"/firmware.bin");
     t_httpUpdate_return ret=ESPhttpUpdate.update("http://"+fuota_server+"/updates/"+tipo_device+"/V"+version+"/firmware.bin");
     switch(ret) {

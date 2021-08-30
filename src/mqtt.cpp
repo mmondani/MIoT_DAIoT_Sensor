@@ -21,7 +21,9 @@ const char* param;
 const char* dev_rec;
 uint8_t canal_rec;
 uint8_t accion_rec;
-const char* ca_cert = \
+uint8_t TRYS_LOAD_FILES=3;
+
+const char* ca_cert =\
 "-----BEGIN CERTIFICATE-----\n" \
 "MIIDtzCCAp+gAwIBAgIUNpIuXcx4wH/lIFjmHQz5Gv6Qj7kwDQYJKoZIhvcNAQEL\n" \
 "BQAwazELMAkGA1UEBhMCU0UxEjAQBgNVBAgMCVN0b2NraG9sbTESMBAGA1UEBwwJ\n" \
@@ -98,11 +100,29 @@ const char* client_key=\
 "lI3HxyQKYbK/BaCSkbCnj2A=\n" \
 "-----END PRIVATE KEY-----\n";
 
+/*void load_client_key(void){
+  File client_key = SPIFFS.open("/client.key", "r");
+  if (!client_key) {
+    Serial.println("Fallo apertura del certificado");
+  }
+  else{
+    Serial.println("Certificado abierto");
+  }
+  delay(300);
+  if (espClient.loadPrivateKey(client_key,sizeof(client_key))){
+    Serial.println("Certificado cargado");
+  }
+  else{
+    Serial.println("Certificado NO cargado");
+  }
+  
+}*/
 
 
 void mqtt_init(void){
   espClient.setCACert(ca_cert);
   espClient.setCertificate(client_crt);
+  //load_client_key();
   espClient.setPrivateKey(client_key);
   mqttClient.setServer(mqtt_server.c_str(), mqtt_tcp_str.toInt());//mqttClient.setServer("192.168.1.42", 8883);
   mqttClient.setCallback(receivedCallback);
@@ -146,10 +166,14 @@ void receivedCallback(char* topic, byte* payload, unsigned int length) {
     return;
   }
 
-  //Modelo de entrada: {"Device":"DAIoT01","Command":"set", "Parameter":1} 
+  //Modelo de entrada: {"Device":"DAIoT01","Command":"on", "Parameter":"1"} 
   dev_rec=parse_payload["Device"];
   command=parse_payload["Command"];
-  param=parse_payload["Parameter"];
+  if (parse_payload.containsKey("Parameter")){
+    param=parse_payload["Parameter"];
+  }else{
+    param="";
+  }
 
   //--Debug del parseo de payload entrante
   //Serial.println("Comando:");

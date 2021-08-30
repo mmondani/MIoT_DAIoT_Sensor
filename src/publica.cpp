@@ -44,19 +44,20 @@ void send_pub(int elemento){
             Serial.print("Publica Telemetria:");
             Serial.println(json_pub);
             packetIdPub = mqttClient.publish(topic_telem.c_str(),json_pub);                                                    
-            Serial.printf("Topico %s con QoS 1, packetId: %i\n", topic_telem.c_str(), packetIdPub);
-            Serial.printf("Mensaje: T=%.2f H=%.2f\n", tempp, hump);
+            //Serial.printf("Topico %s con QoS 1, packetId: %i\n", topic_telem.c_str(), packetIdPub);
+            //Serial.printf("Mensaje: T=%.2f H=%.2f\n", tempp, hump);
             break;
         case ACTUACION:
             Serial.print("Publica Actuacion:");
             Serial.println(json_pub);
             packetIdPub = mqttClient.publish(topic_resp.c_str(), json_pub);
-            Serial.printf("Topico %s con QoS 1, packetId: %i\n", topic_resp.c_str(), packetIdPub);
+            //Serial.printf("Topico %s con QoS 1, packetId: %i\n", topic_resp.c_str(), packetIdPub);
             break;
     }
 }
 
 void publica_medicion(void){
+    //-- Payload de medicion {"Device":"DAIoT01","Valores":{"ts":1629934560,"Temperatura":20,"Humedad":51}}
     publica.clear();
     publica["Device"] = device;
     JsonObject val = publica.createNestedObject("Valores");
@@ -69,6 +70,7 @@ void publica_medicion(void){
 }
 
 void publica_canales(uint8_t canal){
+    //-- Payload de respuesta de actuación {"Device":"DAIoT01","Valores":{"Canal":1,"Estado":1}}
     publica.clear();
     publica["Device"]=device;
     JsonObject val = publica.createNestedObject("Valores");
@@ -85,6 +87,7 @@ void publica_canales(uint8_t canal){
 }
 
 void publica_resp_rpc(String comando){
+    //-- Payload de respuesta {"Device":"DAIoT01","Comando":"version","Valores":{"Version firmware":"1.0.0","Version hardware":"1.0.0"}}
     publica.clear();
     publica["Device"] = device;
     publica["Comando"]=comando;
