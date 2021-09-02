@@ -1,7 +1,6 @@
 
 #include "mqtt.h"
 
-
 //--Objetos externos
 extern WiFiClientSecure espClient;
 extern PubSubClient mqttClient;
@@ -16,91 +15,92 @@ extern String device;
 //--Variables locales
 String topic_rec;
 String msg_rec;
-const char* command;
-const char* param;
-const char* dev_rec;
+const char *command;
+const char *param;
+const char *dev_rec;
 uint8_t canal_rec;
 uint8_t accion_rec;
-uint8_t TRYS_LOAD_FILES=3;
+uint8_t TRYS_LOAD_FILES = 3;
 
-const char* ca_cert =\
-"-----BEGIN CERTIFICATE-----\n" \
-"MIIDtzCCAp+gAwIBAgIUNpIuXcx4wH/lIFjmHQz5Gv6Qj7kwDQYJKoZIhvcNAQEL\n" \
-"BQAwazELMAkGA1UEBhMCU0UxEjAQBgNVBAgMCVN0b2NraG9sbTESMBAGA1UEBwwJ\n" \
-"U3RvY2tob2xtMRAwDgYDVQQKDAdoaW1pbmRzMQswCQYDVQQLDAJDQTEVMBMGA1UE\n" \
-"AwwMMTkyLjE2OC4xLjQyMB4XDTIxMDcyMzE5NDIyNVoXDTIyMDcyMzE5NDIyNVow\n" \
-"azELMAkGA1UEBhMCU0UxEjAQBgNVBAgMCVN0b2NraG9sbTESMBAGA1UEBwwJU3Rv\n" \
-"Y2tob2xtMRAwDgYDVQQKDAdoaW1pbmRzMQswCQYDVQQLDAJDQTEVMBMGA1UEAwwM\n" \
-"MTkyLjE2OC4xLjQyMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAxJFB\n" \
-"83pPIfIw3YqPEuSa6NacikeoAdgdNGpaBQ2uzxQ7IMWdxsmoHTG+uGG4ML/07FHo\n" \
-"UAsX9qH6dzgKK/BfMrsDir2KexHBWNa1+QzNsK9+iRXLbtwGGX5GIfU5tbbzmE4d\n" \
-"O+nlcYdZpEgvrOwEuQHXLWlu4tYEP3PxWM+PBIU2LPjnVuh9jHjUY6KPTCtRQrIF\n" \
-"eWm/4xpLx48r0Wtdxgb2kIYSaVdiULMYUWNROpqbZKNC+dRAqf6qqsfem6wimgQP\n" \
-"Wn0AmRaAe7QKJAm9DXVN8G5s5I+ch0w6xbuqGl3TZc1EXO9Z6NQdfO1ArhdLatnH\n" \
-"KWd/QSmkVz1aZxNx4wIDAQABo1MwUTAdBgNVHQ4EFgQUMj4aZN8Ds3YScQUm77cq\n" \
-"++z6QIkwHwYDVR0jBBgwFoAUMj4aZN8Ds3YScQUm77cq++z6QIkwDwYDVR0TAQH/\n" \
-"BAUwAwEB/zANBgkqhkiG9w0BAQsFAAOCAQEABgAaPU7Vyw5ruT/eaklpVwH/ckQ+\n" \
-"TSTQnb5nvLEcO358WmoPfQ90SjGOgSOHZeivRtYyLhpPwDAOhcpjW651gTCvX5Bp\n" \
-"Kptwus4LBOVoQUxon2X/G3/tSWedySnGx6EbC1sgX5XU/vAb3+8yffC9w+hJcsIX\n" \
-"b0T99VbiIt2rCkM45/UodEEw2msN7WSiGg36jjS5l6ERAAit1QZIoNZctW/6zdyc\n" \
-"RwGVVjVUEvX64LjthDVJwqxjG+pNzn4YwTnI6bzA2+zGZjA6aKiDc0GcmLLoPRS0\n" \
-"szRulfxnlHXN76PImjcO3iBOGYFxbtRmk6w2FEcdEj8erCDWO7c1a1FONw==\n" \
+const char *ca_cert =
+    "-----BEGIN CERTIFICATE-----\n"
+"MIIDxTCCAq2gAwIBAgIUU0Fkb04lnfDf6CQNYz9a94l8wIkwDQYJKoZIhvcNAQEL\n"
+"BQAwcjELMAkGA1UEBhMCU0UxEjAQBgNVBAgMCVN0b2NraG9sbTESMBAGA1UEBwwJ\n"
+"U3RvY2tob2xtMRAwDgYDVQQKDAdoaW1pbmRzMQswCQYDVQQLDAJDQTEcMBoGA1UE\n"
+"AwwTZGFpb3QudHBsaW5rZG5zLmNvbTAeFw0yMTA5MDExOTM2MDJaFw0yMjA5MDEx\n"
+"OTM2MDJaMHIxCzAJBgNVBAYTAlNFMRIwEAYDVQQIDAlTdG9ja2hvbG0xEjAQBgNV\n"
+"BAcMCVN0b2NraG9sbTEQMA4GA1UECgwHaGltaW5kczELMAkGA1UECwwCQ0ExHDAa\n"
+"BgNVBAMME2RhaW90LnRwbGlua2Rucy5jb20wggEiMA0GCSqGSIb3DQEBAQUAA4IB\n"
+"DwAwggEKAoIBAQCkYCLdNJJztLnO3UyFIOHW8j5KpZJMRS3xBCXzMJGwxC30leqC\n"
+"BUBRQPUZzM7eZxb7/1O6HqgCrXAG2AxIMoKoc9zZBDaonCAECgnLar4xf79FxFhF\n"
+"M2rgMmjXyRiXfm4a4/vfcrECmfViAPcb4hlx0NPPLfC5pzY8yVewfLdTSxp1iaBE\n"
+"g+F9RV3qYbYhG6qwAJ/JpKrpjp8u4PXfewkzX78T8ruUQJc/Y37TR30hg375+Irt\n"
+"JOMiUsNRXzcAtxU/Erx1YCYX4Bgzp0QSs8m2N9NIyzUub9I8YIwOnRQWZd/Yiydf\n"
+"OXqxLvhWjkVlGxwlaJlHKz5qTE96DIwrLdtpAgMBAAGjUzBRMB0GA1UdDgQWBBTk\n"
+"G7tJNTFVbGUSuERZW8bLR2lB6TAfBgNVHSMEGDAWgBTkG7tJNTFVbGUSuERZW8bL\n"
+"R2lB6TAPBgNVHRMBAf8EBTADAQH/MA0GCSqGSIb3DQEBCwUAA4IBAQArf5XS3EUX\n"
+"Thp5iOnSd7QkI3OV6x585VKpGsBQUT3BcgJntHLTG+YbCfOm797kU8F+GLMKRO+O\n"
+"OrV3/SLPFSD6kgfGWVbrB+R0AvgSGjO1IBGzflgplEug9eKsLIrfITPkcE0k2Ef+\n"
+"dHbDctPrN9nhfbNOuhkVxBsJCzssxdWUUfwGghMU5xPyViUl7g4Y6zy6AXh84FgQ\n"
+"zMjfVRhPg3UmDN92MT+tROvFjM73L2RGuazS9gqFn3gm4FXcYRhhE00EJpSKmD32\n"
+"3u/WJxWulj8j/qv/az6KfUj0LpGrW4EcqDAhHgPDmO60y7YF0KGwV1SSZWd78O5Q\n"
+"HRxw7aSu1zvz\n"
 "-----END CERTIFICATE-----\n";
 
-const char* client_crt=\
-"-----BEGIN CERTIFICATE-----\n" \
-"MIIDYTCCAkkCFE9WpIffzfrNAYRuaezqu+2XmDsWMA0GCSqGSIb3DQEBCwUAMGsx\n" \
-"CzAJBgNVBAYTAlNFMRIwEAYDVQQIDAlTdG9ja2hvbG0xEjAQBgNVBAcMCVN0b2Nr\n" \
-"aG9sbTEQMA4GA1UECgwHaGltaW5kczELMAkGA1UECwwCQ0ExFTATBgNVBAMMDDE5\n" \
-"Mi4xNjguMS40MjAeFw0yMTA3MjMxOTQyMzBaFw0yMjA3MjMxOTQyMzBaMG8xCzAJ\n" \
-"BgNVBAYTAlNFMRIwEAYDVQQIDAlTdG9ja2hvbG0xEjAQBgNVBAcMCVN0b2NraG9s\n" \
-"bTEQMA4GA1UECgwHaGltaW5kczEPMA0GA1UECwwGQ2xpZW50MRUwEwYDVQQDDAwx\n" \
-"OTIuMTY4LjEuNDIwggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQCuR/+V\n" \
-"c5plHL6BO8e2TN4b2OTmJ+yOb9G99v5hsgbwdxYJcXJxOrUxRaw+2fHvgmE4qPmk\n" \
-"xTkiI0vlfEaiJITM2XkokeE9rjcdslunJHEeE+DUnAnw8eQzUCATbgmxWSxcVvRK\n" \
-"ALj/4xTHkSAOWweDMLuIFI1uTD05X2vww6VKDOh0KCNCUuNif1wbz4V4YqEVx5UL\n" \
-"aAjoe77h1SBccmED4myEu2UozQU9Lo9aZbu+ImpiJ5s9DtNstQZWfx/1VCRUMXaj\n" \
-"BEhmOwCp05x1S5im3ejEd4sg1ttf8EgputylIX7CqtyMxigR3AsAqH3D86pi+FPp\n" \
-"A4jahKRnR92eVzRBAgMBAAEwDQYJKoZIhvcNAQELBQADggEBAG+p8t0Kn3pfTEN6\n" \
-"xILQefMRPfqwfVOpZNk9iMB675RcxbkpvR3VCg4XwlDo/HL+/kDiRdC92xkv3l2X\n" \
-"azFwedH8gLj5X2DSHqdRTB9EKBI5mmKxlQk+bL7dHQHMoMbB4XEObsGWsyeM0Ddh\n" \
-"EoNnQZRTs1FGpR7dLT2AcHiiXmDDY/VcFYmlra2PQWlcCVTDWrN+nqLJkJvlv5dF\n" \
-"Nj9RDXDA3LuuKPDGPk0gJ8Ai4EdrfGmseHjwisiYIoMBRRctuffMhRu6oG4xfxma\n" \
-"pcoa1geqHmSoFFjFs3Hnb7O/HmN5aN3X/CiWpsxI4005djedZxWc3gllf+CcCNrP\n" \
-"ipm6d+Y=\n" \
+const char *client_crt =
+    "-----BEGIN CERTIFICATE-----\n"
+"MIIDbzCCAlcCFDtwA2zSfC5Wbt+hmif+kUGsfaDWMA0GCSqGSIb3DQEBCwUAMHIx\n"
+"CzAJBgNVBAYTAlNFMRIwEAYDVQQIDAlTdG9ja2hvbG0xEjAQBgNVBAcMCVN0b2Nr\n"
+"aG9sbTEQMA4GA1UECgwHaGltaW5kczELMAkGA1UECwwCQ0ExHDAaBgNVBAMME2Rh\n"
+"aW90LnRwbGlua2Rucy5jb20wHhcNMjEwOTAxMTkzNjAzWhcNMjIwOTAxMTkzNjAz\n"
+"WjB2MQswCQYDVQQGEwJTRTESMBAGA1UECAwJU3RvY2tob2xtMRIwEAYDVQQHDAlT\n"
+"dG9ja2hvbG0xEDAOBgNVBAoMB2hpbWluZHMxDzANBgNVBAsMBkNsaWVudDEcMBoG\n"
+"A1UEAwwTZGFpb3QudHBsaW5rZG5zLmNvbTCCASIwDQYJKoZIhvcNAQEBBQADggEP\n"
+"ADCCAQoCggEBAJ0a3IdNbf+XPEywhC0X/IFVEwYG6IdwjIJO0Fq8cvAM0KSqopuK\n"
+"8KZVb9gl7wO6JSh3RgYVzCcCjycfsdyVhaexKP5Bx4YnEuL1LWQedI1wB+ER81yW\n"
+"3FGy2TRSNDj/JiAzEY4JrwKcuFgRKllQbp9sQstYUXndpZiijT5WxIgyemDVeDO6\n"
+"81nUJzP3Unp9pW9pSKDutUzZXVrPA+/U/CRDvTCZokrzqobpqV6WlRnfyJhUiFq8\n"
+"C/xwkTlre1G8IP0vu+Cv/0tusN2IcLWlCxPTWpYzrE5aDp+4KrESHi8wgWA4mfB1\n"
+"Boha6vM4gyTvoTjM8adjO9Zh/3x5iQwwWecCAwEAATANBgkqhkiG9w0BAQsFAAOC\n"
+"AQEATSlo3WGk8k/KC+Du4TtqEmJ3u8QPkPnIZTnXRgfRJXkOZLHaqdleHvzTeXbf\n"
+"sl2UfD/xc+Fo/jy8GjJ+XEzHch7tF07T1YXj8acbNNYm7PPhBuqFZDa0ujWZodmJ\n"
+"WvP7kT2ZZtAdYXjUYVPWM2iA9nO0AS9hlqvkcNgfzNsiiBJfCMfbX4yQvYxk+9f8\n"
+"vXU2qArXaeSY4BCuEXJK4JdXTC8qE2An97s+Y6WaQpBBZTo62xPasSRBBHsaS1Lg\n"
+"kx1PKUNlm3us29uxM3upryK9/ShVj7Nkx5s0E444FfI+E1yvV3KA6r4lD2InjBNf\n"
+"1xMBlJPWJ2nQOrmwo2jpWjomKQ==\n"
 "-----END CERTIFICATE-----\n";
 
-const char* client_key=\
-"-----BEGIN PRIVATE KEY-----\n" \
-"MIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQCuR/+Vc5plHL6B\n" \
-"O8e2TN4b2OTmJ+yOb9G99v5hsgbwdxYJcXJxOrUxRaw+2fHvgmE4qPmkxTkiI0vl\n" \
-"fEaiJITM2XkokeE9rjcdslunJHEeE+DUnAnw8eQzUCATbgmxWSxcVvRKALj/4xTH\n" \
-"kSAOWweDMLuIFI1uTD05X2vww6VKDOh0KCNCUuNif1wbz4V4YqEVx5ULaAjoe77h\n" \
-"1SBccmED4myEu2UozQU9Lo9aZbu+ImpiJ5s9DtNstQZWfx/1VCRUMXajBEhmOwCp\n" \
-"05x1S5im3ejEd4sg1ttf8EgputylIX7CqtyMxigR3AsAqH3D86pi+FPpA4jahKRn\n" \
-"R92eVzRBAgMBAAECggEAQnCAJuFjQpiqp2m6wOyc39DXskYWEFbghqLaZzQPISzE\n" \
-"4eS11CSlXptJBszfRodVuNvyD7aACVubW2j9JGL3nYBqh+TVEUaRDGkqN5XU6bp6\n" \
-"Q5MY1xnf/Q/WqpGQcGOmXa1og62y2RogmdPhfJeHTaQOWdo78Ihv7qdJ5wcuxAN2\n" \
-"BZoX9uKn/hBcKzE7PuLqEwpV4g2tGseAyC/Nn6k+Iigxxy1m0cNUgDisb0f1ZaOW\n" \
-"635IisqcDyn0nCcrAkcvlK1nnRx8V21xtGlB03c+k8FRVfoZ/AuESdj578v1RaE8\n" \
-"qIz36Erp+IFOWW1gCWi448k8bF3eArcW55afLrGIAQKBgQDnNDpSi91rGuCKi3Hp\n" \
-"ypT2gxCVS5a5EwWd3ELOgAHHJsu5VE4FYvBA0gvbzjIYBOY1MBmLzt9txQvG1y8O\n" \
-"OM+wQkmWe7CiE/mv6BXCSSm5kvOly60ae1seu00MFNa72uKRPezQRaTc25IRz4R9\n" \
-"99m2xY2VwT5bK6WAGcG3d6CpUQKBgQDA+PCLmZPko9X2lD64czZA2X5tthvAYJp8\n" \
-"/3/l/aZ6wt/m65Qq6MK3wiMlPnJh7J8vDpbptknizwc7Vgq6qrT2SNuzH/08X281\n" \
-"W+bGSWKw0Ijoe0F25TOZAxkSg35ZK7nx7T2XqLr4DpSpfJleZ+xZ88tN4K0313pM\n" \
-"kJpTrGcf8QKBgA58PTMyxBqTwoGrnuVw5chUCdPwum65/F4ZkK3zYykhCx5/Y6v+\n" \
-"uOK2xjttPcI3fFzUuKUDvwfXkpdQoAgaExkN7iJZeYWODtSwi7xybQTNaip3Ck9g\n" \
-"byMLxRX+sD1wx0UmRhH+awfTUeF/yONDhgZndiltxAReRa4y7uoZup0hAoGAJ+4b\n" \
-"EDfqM2B3cLuCMvacHlUi5R7OpUMYFI9l7rhKz5ItdIIAudRKHm4MibNfRcYJtloF\n" \
-"fjzbExSVwYBvXere4St4Uptm8iwpPdhTa2paAo5UFg8TH8ATqjDK6lrNNTRoGJhn\n" \
-"q08dySBzQJLoxXEppf9dbTL1hN2Qj/FIDdJZ0HECgYEAiWbUynbaElnqC/T3ZN9W\n" \
-"VETRcDyXvrfXP9MPFInpPEOq81tzxhx8V19r+ZvXAvLToSpB299NpXXd7Vlil2yr\n" \
-"P+vIlM/pqbFZ1MCoVcfHCBTO9EHeDiXO5ooLDHFZn33VSLoZx1Ou+HRGGgbS3ymZ\n" \
-"lI3HxyQKYbK/BaCSkbCnj2A=\n" \
+const char *client_key =
+    "-----BEGIN PRIVATE KEY-----\n"
+"MIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQCdGtyHTW3/lzxM\n"
+"sIQtF/yBVRMGBuiHcIyCTtBavHLwDNCkqqKbivCmVW/YJe8DuiUod0YGFcwnAo8n\n"
+"H7HclYWnsSj+QceGJxLi9S1kHnSNcAfhEfNcltxRstk0UjQ4/yYgMxGOCa8CnLhY\n"
+"ESpZUG6fbELLWFF53aWYoo0+VsSIMnpg1XgzuvNZ1Ccz91J6faVvaUig7rVM2V1a\n"
+"zwPv1PwkQ70wmaJK86qG6alelpUZ38iYVIhavAv8cJE5a3tRvCD9L7vgr/9LbrDd\n"
+"iHC1pQsT01qWM6xOWg6fuCqxEh4vMIFgOJnwdQaIWurzOIMk76E4zPGnYzvWYf98\n"
+"eYkMMFnnAgMBAAECggEAE3mM9MjIZfKdavRGrkBW8MFXBlw83u04vb5/XYAWz2MH\n"
+"SiJM3fMvOa9Fmgm5w0CD8qw2ZfK1x/AtRrBLIAj49HyllD8bOKoHUVMLOWn9ELte\n"
+"fqv2+vdIgGgnPLEkABzA4STzfCP/Kde7kk8ubLvnuqN09DgSgYTUTkN4Ns4Str85\n"
+"YwNYUbpwfR8zNb1waeI8L32wxxCSuU2Mz1iHHAN1v1vrRaafcfWwFW7+/R8mqxBG\n"
+"C6CI9HyI9W/fEqXphgjCe6bLKd7addEdtfgj/hv1GNrwz0fdNQ1bow3OYfB+iu6i\n"
+"sSrtfBW5zdWta3yTLnG7UyjVmUyH1IEJZ4I2swQPAQKBgQDQM2tlr11gNt/2S6Zp\n"
+"a154XGYJ5dvdQkdaa8aoaXeiur1l0dCULHAV80GrXWFu+c35vf239uJH0Kc65nUX\n"
+"3dXi/O6jNb3oy0CMNyfJEjngQ8Wu6frpVHcT05CbWlRXeddEs4l2Y783bEw+vBTL\n"
+"rYi1IipgKl/tmXbLStw7S3A8RwKBgQDBLGIGwswsbDJSR7ZvkmDoMtfgbKFYjKQ4\n"
+"ui1Wd0i/jAJJtTGDUundldP4E6tCy0YVEFTnrSmiVBhaJvD2jOkf/TBemj52JhIM\n"
+"ut1g+0ZCvGOU6hbW/RVAHCYAiVI+WCnK3GeWSGsBCau/980qMw5hyZ2g7L+1kDVC\n"
+"SzbCLlLlYQKBgFPb8i0h5k1jrO/KZrvdaE64gM0JzXYgRRcxg/G/kVV1O+YwDYAx\n"
+"KfBda5z3XtBRQ9qM4Q3hHiFo9IKv4of7bTQhRolskxKaE2Smrpq5gaBIC+65BbxH\n"
+"rjLJK1y3lHMrez6Lxhlucc2EDG3UWdf0DLVQjprvVnYgMw4NGAm2B/3vAoGBALDt\n"
+"LqdUmV6ChqB30C9mWV2y26hQtoJ85hiS5N2SCU5vNNU/oKbQNSTfirJniW928Kxw\n"
+"NeOv5TcpYNiJXB/lNcw3wKqVCWp7OgLwz7x4yIRtOaP1t4+XY3RBk8jf/TTe2QBV\n"
+"WIb7sw3TRrxfgUkKVDzaRYZT8M6h0zXx36iAdyphAoGBAJ1ObD/XxfgbkghIMeHa\n"
+"veM1KCylXwg3moqtl3LLx9SRlTKOjNidPXdJZhrTBtG4AhEoFqaI5AyQbJGWaHRv\n"
+"+1OF5BSz8BjNqxnS0KyCLhPUF/res9Nutnoorf04wfPWFfayU9F5LGOWE0GXkc/C\n"
+"BtZTgScNMQnMT3WTppuWipJH\n"
 "-----END PRIVATE KEY-----\n";
 
-/*void load_client_key(void){
+void load_client_key(void){
   File client_key = SPIFFS.open("/client.key", "r");
   if (!client_key) {
     Serial.println("Fallo apertura del certificado");
@@ -109,35 +109,45 @@ const char* client_key=\
     Serial.println("Certificado abierto");
   }
   delay(300);
-  if (espClient.loadPrivateKey(client_key,sizeof(client_key))){
+  if (espClient.loadPrivateKey(client_key,sizeof(client_key)+1)){
     Serial.println("Certificado cargado");
   }
   else{
     Serial.println("Certificado NO cargado");
   }
   
-}*/
+}
 
-
-void mqtt_init(void){
+void mqtt_init(void)
+{
+  // TODO: pasar certificados al FS
   espClient.setCACert(ca_cert);
   espClient.setCertificate(client_crt);
   //load_client_key();
   espClient.setPrivateKey(client_key);
-  mqttClient.setServer(mqtt_server.c_str(), mqtt_tcp_str.toInt());//mqttClient.setServer("192.168.1.42", 8883);
+  mqttClient.setServer(mqtt_server.c_str(), mqtt_tcp_str.toInt()); //mqttClient.setServer("192.168.1.42", 8883);
   mqttClient.setCallback(receivedCallback);
 }
 
-void mqtt_connect() {
+void mqtt_connect()
+{
   /* Loop until reconnected */
-  while (!mqttClient.connected()) {
+  while (!mqttClient.connected())
+  {
     Serial.print("Conectando a MQTT...");
+    Serial.println(mqtt_server.c_str());
+    Serial.println(mqtt_tcp_str.toInt());
     /* connect now */
-    if (mqttClient.connect(device.c_str())){
+    if (mqttClient.connect(device.c_str()))
+    {
+      //TODO: Manejar desconexiones
       Serial.println("Conectado");
       /* subscribe topic */
       mqttClient.subscribe(topic_act.c_str());
-    } else {
+      //TODO: Agregar mensaje LWT 
+    }
+    else
+    {
       Serial.print("falla, codigo status =");
       Serial.print(mqttClient.state());
       Serial.println("Nuevo intento en 5 segundos");
@@ -147,12 +157,12 @@ void mqtt_connect() {
   }
 }
 
-
-void receivedCallback(char* topic, byte* payload, unsigned int length) {
+void receivedCallback(char *topic, byte *payload, unsigned int length)
+{
   Serial.println("Publicacion recibida.");
   payload[length] = '\0';
-  topic_rec = String((char*)topic);
-  msg_rec = String((char*)payload);
+  topic_rec = String((char *)topic);
+  msg_rec = String((char *)payload);
   Serial.print("Topic: ");
   Serial.println(topic_rec);
   Serial.print("Payload: ");
@@ -160,19 +170,23 @@ void receivedCallback(char* topic, byte* payload, unsigned int length) {
 
   StaticJsonDocument<200> parse_payload;
   DeserializationError error = deserializeJson(parse_payload, msg_rec);
-  if (error) {
+  if (error)
+  {
     Serial.print("[DEBUG] deserializeJson() fallo: ");
     Serial.println(error.f_str());
     return;
   }
 
-  //Modelo de entrada: {"Device":"DAIoT01","Command":"on", "Parameter":"1"} 
-  dev_rec=parse_payload["Device"];
-  command=parse_payload["Command"];
-  if (parse_payload.containsKey("Parameter")){
-    param=parse_payload["Parameter"];
-  }else{
-    param="";
+  //Modelo de entrada: {"Device":"DAIoT01","Command":"on", "Parameter":"1"}
+  dev_rec = parse_payload["Device"];
+  command = parse_payload["Command"];
+  if (parse_payload.containsKey("Parameter"))
+  {
+    param = parse_payload["Parameter"];
+  }
+  else
+  {
+    param = "";
   }
 
   //--Debug del parseo de payload entrante
@@ -182,7 +196,8 @@ void receivedCallback(char* topic, byte* payload, unsigned int length) {
   //Serial.println(param);
 
   //--Si el comando es para este dispositivo, procesa
-  if ((String)dev_rec==device){
+  if ((String)dev_rec == device)
+  {
     command_proc(command, param);
   }
 }

@@ -12,8 +12,9 @@ String parametro;
 void command_proc(const char* command,const char* param){
   comando=String(command);
   parametro=String(param);
-  //Serial.println(comando);
-  //Serial.println(parametro);
+  
+  Serial.println(comando);
+  Serial.println(parametro);
 
   //--Comando on
   if (comando=="on"){

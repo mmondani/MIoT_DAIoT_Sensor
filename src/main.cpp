@@ -34,15 +34,15 @@
 
 /*===================[Definiciones de hardware]==================================*/
 // Digital pin connected to the DHT sensor
-#define DHTPIN                        26  
+#define DHTPIN                        33//26  
 //#define DHTTYPE DHT11               DHT 11
 #define DHTTYPE                       DHT22     // DHT 22(AM2302), AM2321
 //#define DHTTYPE                     DHT21     // DHT 21 (AM2301)   
-#define LED_BUILTIN                   2
+#define LED_BUILTIN                   14//2
 #define FRESET                        25        // pin para factory reset
-#define CANAL1                        12        // pin salida canal 1
-#define CANAL2                        14        // pin salida canal 2
-#define LED_PULSO                     33        // led de pulso
+#define CANAL1                        27        // pin salida canal 1
+#define CANAL2                        26        // pin salida canal 2
+#define LED_PULSO                     14//2         // led de pulso
 
 /*===================[Definiciones de software]==================================*/
 #define SERIAL_BAUDRATE               115200
@@ -75,12 +75,12 @@ uint32_t flag_update_eeprom_pos   =   500;
 /*===================[Variables de Factory reset]================================*/
 String hardware                   =   "ESP32";
 String device                     =   "DAIoT";               //usado como template
-String mqtt_server                =   "192.168.1.42";
-String fuota_server               =   "192.168.1.17";
+String mqtt_server                =   "daiot.tplinkdns.com";
+String fuota_server               =   "daiot.tplinkdns.com:8080";
 String mqtt_tcp_str               =   "8883";
-String ssid                       =   "MiSSID";
-String ssid_pass                  =   "MiPasswd";
-String passwd_AP                  =   "12345678";
+String ssid                       =   "defaultSSID";
+String ssid_pass                  =   "defaultPassword";
+String passwd_AP                  =   "MiAPPasswd";
 String ubicacion                  =   "MiUbicacion";
 uint8_t sensor                    =   1;
 uint8_t canal1_status             =   0;
@@ -143,7 +143,8 @@ void setup() {
   read_vars(1); 
   Serial.print("Versión del firmware:");
   Serial.println(fversion);
-  check_update();
+  //TODO: Agregar web server para actualizar
+  //check_update();
   dht.begin();
   mqtt_init();
   wifi_connect();

@@ -13,6 +13,7 @@ void wifi_connect(void) {
   while (WiFi.status() != WL_CONNECTED) {
     delay(500);
     Serial.print(".");
+    //TODO: Reiniciar despues de varios intentos 
   }
   Serial.println("Conectado");
   Serial.print("IP address: ");
