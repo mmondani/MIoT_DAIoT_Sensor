@@ -34,15 +34,15 @@
 
 /*===================[Definiciones de hardware]==================================*/
 // Digital pin connected to the DHT sensor
-#define DHTPIN                        33//26  
-//#define DHTTYPE DHT11               DHT 11
-#define DHTTYPE                       DHT22     // DHT 22(AM2302), AM2321
+#define DHTPIN                        23//33  
+#define DHTTYPE                       DHT11 //DHT 11
+//#define DHTTYPE                       DHT22     // DHT 22(AM2302), AM2321
 //#define DHTTYPE                     DHT21     // DHT 21 (AM2301)   
-#define LED_BUILTIN                   14//2
+#define LED_BUILTIN                   2//14
 #define FRESET                        25        // pin para factory reset
 #define CANAL1                        27        // pin salida canal 1
 #define CANAL2                        26        // pin salida canal 2
-#define LED_PULSO                     14//2         // led de pulso
+#define LED_PULSO                     2//14         // led de pulso
 
 /*===================[Definiciones de software]==================================*/
 #define SERIAL_BAUDRATE               115200
