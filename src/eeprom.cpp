@@ -32,9 +32,9 @@ void read_vars(bool ver){
   mqtt_server=read_StringEE(mqtt_server_eeprom_pos, 25);
   fuota_server=read_StringEE(fuota_server_eeprom_pos, 25);
   mqtt_tcp_str=read_StringEE(mqtt_tcp_str_eeprom_pos, 25);
-  passwd_AP=read_StringEE(passwd_AP_eeprom_pos, 30);
+  passwd_AP=read_StringEE(passwd_AP_eeprom_pos, 25);
   ssid=read_StringEE(ssid_eeprom_pos, 25); 
-  ssid_pass=read_StringEE(ssid_passwd_eeprom_pos, 25); 
+  ssid_pass=read_StringEE(ssid_passwd_eeprom_pos, 30); 
   ubicacion=read_StringEE(ubicacion_eeprom_pos, 25); 
   canal1_status=read_StringEE(canal1_eeprom_pos,25).toInt();
   canal2_status=read_StringEE(canal2_eeprom_pos,25).toInt();

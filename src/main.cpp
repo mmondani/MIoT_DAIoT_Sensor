@@ -75,11 +75,11 @@ uint32_t flag_update_eeprom_pos   =   500;
 /*===================[Variables de Factory reset]================================*/
 String hardware                   =   "ESP32";
 String device                     =   "DAIoT";               //usado como template
-String mqtt_server                =   "daiot.tplinkdns.com";
+String mqtt_server                =   "wificom100.dyndns.org";//"daiot.tplinkdns.com";
 String fuota_server               =   "daiot.tplinkdns.com:8080";
 String mqtt_tcp_str               =   "8883";
-String ssid                       =   "defaultSSID";
-String ssid_pass                  =   "defaultPassword";
+String ssid                       =   "WiFi_Dpto";
+String ssid_pass                  =   "19.pierret.9620.pierrot.00";
 String passwd_AP                  =   "MiAPPasswd";
 String ubicacion                  =   "MiUbicacion";
 uint8_t sensor                    =   1;

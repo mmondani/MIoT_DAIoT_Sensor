@@ -1,7 +1,7 @@
 #!/bin/bash
 
 #IP="192.168.0.151";
-IP="daiot.tplinkdns.com";
+IP="wificom100.dyndns.org";
 SUBJECT_CA="/C=SE/ST=Stockholm/L=Stockholm/O=himinds/OU=CA/CN=$IP";
 SUBJECT_SERVER="/C=SE/ST=Stockholm/L=Stockholm/O=himinds/OU=Server/CN=$IP";
 SUBJECT_CLIENT="/C=SE/ST=Stockholm/L=Stockholm/O=himinds/OU=Client/CN=$IP";
