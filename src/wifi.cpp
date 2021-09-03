@@ -146,6 +146,11 @@ void wifi_handler(void) {
         gotoState(wifi_fsm_connected);
       }
       else if (newSsidOrPassword) {
+        newSsidOrPassword = false;
+
+        WiFi.disconnect();
+
+        Serial.println("Se configuraron nuevos SSID y password");
         gotoState(wifi_fsm_connecting);
       }
       /***********************************************************************************/
