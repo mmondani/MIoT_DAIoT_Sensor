@@ -78,9 +78,9 @@ String device                     =   "DAIoT";               //usado como templa
 String mqtt_server                =   "wificom100.dyndns.org";//"daiot.tplinkdns.com";
 String fuota_server               =   "daiot.tplinkdns.com:8080";
 String mqtt_tcp_str               =   "8883";
-String ssid                       =   "WiFi_Dpto";
-String ssid_pass                  =   "19.pierret.9620.pierrot.00";
-String passwd_AP                  =   "MiAPPasswd";
+String ssid                       =   "defaultSSID";
+String ssid_pass                  =   "defaultPassword";
+String passwd_AP                  =   "12345678";
 String ubicacion                  =   "MiUbicacion";
 uint8_t sensor                    =   1;
 uint8_t canal1_status             =   0;
@@ -147,19 +147,19 @@ void setup() {
   //check_update();
   dht.begin();
   mqtt_init();
-  wifi_connect();
-  mqtt_connect();
+
   restore_canales();
 
-  //--Inicialización del web server embebido
-  webserver_init();
-  
   //--Start del NTP
   configTime(-3, 0, ntpServer);
 }
 
 void loop() {
-  mqttClient.loop();
+  wifi_handler();
+
+  if (mqttClient.connected())
+    mqttClient.loop();
+
   web_server.handleClient();
   
   //--Intervalo de muestreo

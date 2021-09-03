@@ -63,8 +63,14 @@ void handleUpdateSettings(){
   fuota_server=web_server.arg("fuota_server");
   mqtt_tcp_str=web_server.arg("mqtt_tcp_str");
   passwd_AP=web_server.arg("passwd_AP");
-  ssid=web_server.arg("ssid");
-  ssid_pass=web_server.arg("ssid_pass");
+  
+  if (!ssid.equals(web_server.arg("ssid")) || !ssid_pass.equals(web_server.arg("ssid_pass"))) {
+   ssid=web_server.arg("ssid");
+   ssid_pass=web_server.arg("ssid_pass");
+
+   wifi_newSsidOrPasswordEvent();
+  }
+  
   ubicacion=web_server.arg("ubic");
   sensor=(web_server.arg("sensor")).toInt();
 

@@ -140,7 +140,7 @@ void mqtt_connect()
   /* Loop until reconnected */
   while (!mqttClient.connected())
   {
-    Serial.print("Conectando a MQTT...");
+    Serial.println("\nConectando a MQTT...");
     Serial.println(mqtt_server.c_str());
     Serial.println(mqtt_tcp_str.toInt());
     /* connect now */

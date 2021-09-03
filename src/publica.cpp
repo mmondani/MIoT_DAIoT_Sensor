@@ -33,10 +33,10 @@ uint16_t packetIdPub;
 void send_pub(int elemento){
     //--Verica si hay conexion wifi y mqtt
     if (WiFi.status() != WL_CONNECTED){
-        wifi_connect();
+        return;
     }
     if (!mqttClient.connected()){
-        mqtt_connect();
+        return;
     }
     serializeJson(publica, json_pub);
     switch (elemento){

@@ -12,5 +12,7 @@ extern "C" {
 //--Prototipos
 void wifi_connect(void);
 void WiFiEvent(WiFiEvent_t event);
+void wifi_handler(void);
+void wifi_newSsidOrPasswordEvent (void);
 
 #endif
