@@ -92,6 +92,7 @@ String www_username               =   "admin";
 String topic_telem                =   "device/telemetry";
 String topic_act                  =   "device/command";
 String topic_resp                 =   "device/action";
+String topic_status               =   "device/status";
 String tipo_device                =   "Termohigrometro";
 //-- Versiones
 String fversion                   =   "1.2.0";          

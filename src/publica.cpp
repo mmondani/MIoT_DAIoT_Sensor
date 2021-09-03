@@ -9,6 +9,7 @@ extern String topic_telem;
 extern String topic_led;
 extern String topic_act;
 extern String topic_resp;
+extern String topic_status;
 extern uint8_t canal1_status;
 extern uint8_t canal2_status;
 extern String ssid;
@@ -44,14 +45,18 @@ void send_pub(int elemento){
             Serial.print("Publica Telemetria:");
             Serial.println(json_pub);
             packetIdPub = mqttClient.publish(topic_telem.c_str(),json_pub);                                                    
-            //Serial.printf("Topico %s con QoS 1, packetId: %i\n", topic_telem.c_str(), packetIdPub);
-            //Serial.printf("Mensaje: T=%.2f H=%.2f\n", tempp, hump);
             break;
+
         case ACTUACION:
             Serial.print("Publica Actuacion:");
             Serial.println(json_pub);
             packetIdPub = mqttClient.publish(topic_resp.c_str(), json_pub);
-            //Serial.printf("Topico %s con QoS 1, packetId: %i\n", topic_resp.c_str(), packetIdPub);
+            break;
+
+        case STATUS:
+            Serial.print("Publica Status:");
+            Serial.println(json_pub);
+            packetIdPub = mqttClient.publish(topic_status.c_str(), json_pub, true);
             break;
     }
 }
@@ -98,4 +103,14 @@ void publica_resp_rpc(String comando){
     }
     serializeJson(publica, json_pub);
     send_pub(ACTUACION);
+}
+
+void publica_status(bool status) {
+    // Payload de status: {"Device":"DAIoT01","Status":"online"}
+    publica.clear();
+    publica["Device"] = device;
+    publica["Status"]= status? "online" : "offline";
+
+    serializeJson(publica, json_pub);
+    send_pub(STATUS);
 }

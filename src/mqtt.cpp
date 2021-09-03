@@ -10,6 +10,7 @@ extern String mqtt_tcp_str;
 
 //--Variables externas
 extern String topic_act;
+extern String topic_status;
 extern String device;
 
 //--Variables locales
@@ -143,14 +144,24 @@ void mqtt_connect()
     Serial.println("\nConectando a MQTT...");
     Serial.println(mqtt_server.c_str());
     Serial.println(mqtt_tcp_str.toInt());
+
     /* connect now */
-    if (mqttClient.connect(device.c_str()))
+    String lwt_message = "{\"Device\":\"" + device + "\",\"Status\":\"offline\"}";
+
+    if (mqttClient.connect(
+            device.c_str(),
+            topic_status.c_str(),
+            0,
+            true,
+            lwt_message.c_str()))
     {
       //TODO: Manejar desconexiones
       Serial.println("Conectado");
       /* subscribe topic */
       mqttClient.subscribe(topic_act.c_str());
       //TODO: Agregar mensaje LWT 
+
+      publica_status(true);
     }
     else
     {
