@@ -117,6 +117,11 @@ La figura muestra el circuito implementado con NodeMCU32, DHT22 y componentes au
 - Recepción de comandos por protocolo mqtt al tópico ```device/command```  y payload con el siguiente modelo:
   > {"Device":"DAIoT01","Command":"on","Parameter":"1"}
 - Restablecimiento del estado de los canales después de un apagado del dispositivo.
+- Se implementa una máquina de estados para gestionar la conexión a la red Wi-Fi. Intenta durante 5 segundos conectarse a la red que tiene guardada en la EEPROM y en caso de no poder, pasa a un estado de espera. Si, mediante la web de configuración embebida en el dispositivo, se cambia el SSID y/o el password, la máquina de estado vuelve a probar conectarse a la red.
+- Cuando el dispositivo se conecta al broker MQTT, configura un LWT (con el flag retained) con el topic `device/status` y el siguiente contenido:
+  > {"Device":"DAIoT01","Status":"offline"}
+- Una vez completada la conexión, el primer mensaje (con el flag retained) que envía el dispositivo al broker es, en el topic `device/status`:
+  > {"Device":"DAIoT01","Status":"online"}
   
 ## Testing
 
