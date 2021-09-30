@@ -56,7 +56,7 @@ void send_pub(int elemento){
         case STATUS:
             Serial.print("Publica Status:");
             Serial.println(json_pub);
-            packetIdPub = mqttClient.publish(topic_status.c_str(), json_pub, true);
+            packetIdPub = mqttClient.publish(topic_status.c_str(), json_pub, false);
             break;
     }
 }

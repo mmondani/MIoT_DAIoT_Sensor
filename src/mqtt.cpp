@@ -152,7 +152,7 @@ void mqtt_connect()
             device.c_str(),
             topic_status.c_str(),
             0,
-            true,
+            false,
             lwt_message.c_str()))
     {
       //TODO: Manejar desconexiones
