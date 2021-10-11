@@ -165,6 +165,7 @@ void wifi_handler(void) {
   }
 }
 
+/*Esta función genera un evento cuando el SSID o el password han sido modificados*/
 
 void wifi_newSsidOrPasswordEvent (void) {
   newSsidOrPassword = true;

@@ -64,6 +64,8 @@ void handleUpdateSettings(){
   mqtt_tcp_str=web_server.arg("mqtt_tcp_str");
   passwd_AP=web_server.arg("passwd_AP");
   
+   /* se evalúa si el ssid o el password cambian, en cuyo caso se dispara el evento wifi_newSsidOrPasswordEvent */
+
   if (!ssid.equals(web_server.arg("ssid")) || !ssid_pass.equals(web_server.arg("ssid_pass"))) {
    ssid=web_server.arg("ssid");
    ssid_pass=web_server.arg("ssid_pass");
